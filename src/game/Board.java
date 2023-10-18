@@ -86,6 +86,8 @@ public class Board {
         }
         return null;
     }
+
+    // Put any position, it doesn't matter if it doesn't exist it will change it into an existing one.
     public Piece getPiece(Position position){
         Position pos = getPositionByRowCol(position.getRow(), position.getCol());
         return positions.get(pos);

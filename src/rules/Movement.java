@@ -37,15 +37,19 @@ public class Movement {
         }
         RestrictionRule[] restrictionRules = appendRestrictionRules(game.getGameRules(), piece.getRestrictionRules());
         MovementRule[] movementRules = piece.getMovementRules();
+        SpecialRule[] specialRules = piece.getSpecialRules();
 
         if(!selectedPieceColorIsValid(piece, game.currentTurn()))
             return false;
 
-        /*
-        * for(specialRule...)
-        *   SpecialRules have both restriction rules and movement rules
-        *   if happens to be all valid --> return true
-        *   else: break and continue, maybe it is valid because of normal rules*/
+        if(isValid(specialRules, game.getGameRules(), currentPos, newPos, game.getHistoryOfBoards(), board))
+            return true; // else: we check if with the normal rules we still can.
+
+        return isValid(movementRules, restrictionRules, currentPos, newPos, board);
+
+
+    }
+    public boolean isValid(MovementRule[] movementRules, RestrictionRule[] restrictionRules, Position currentPos, Position newPos, Board board){
         for (RestrictionRule resRule: restrictionRules){
             if(!resRule.validateRule(currentPos, newPos, board))
                 return false;
@@ -58,11 +62,19 @@ public class Movement {
 
         return false;
     }
-    public boolean isValid(MovementRule[] movementRules, RestrictionRule[] restrictionRules){
-        return true;
+
+    public boolean isValid(SpecialRule[] specialRules, RestrictionRule[] gameRules, Position currentPos, Position newPos, ArrayList<Board> historyOfBoards, Board board){
+        for(SpecialRule specialRule : specialRules){
+            if(specialRule.specialRuleIsActive(currentPos, historyOfBoards)){
+                RestrictionRule[] restrictionRules = appendRestrictionRules(gameRules, specialRule.getRestrictionRules());
+                if(isValid(specialRule.getMovementRules(), restrictionRules, currentPos, newPos, board))
+                    return true;
+            }
+        }
+        return false;
     }
 
-    public RestrictionRule[] appendRestrictionRules(RestrictionRule[] gameRules, RestrictionRule[] restrictionRules){
+        public RestrictionRule[] appendRestrictionRules(RestrictionRule[] gameRules, RestrictionRule[] restrictionRules){
         RestrictionRule[] combinedRules = new RestrictionRule[gameRules.length + restrictionRules.length];
         System.arraycopy(gameRules, 0, combinedRules, 0, gameRules.length);
         System.arraycopy(restrictionRules, 0, combinedRules, gameRules.length, restrictionRules.length);

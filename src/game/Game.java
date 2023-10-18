@@ -93,4 +93,7 @@ public class Game {
         startTurnBasedGame(newBoard);
     }
 
+    public ArrayList<Board> getHistoryOfBoards() {
+        return historyOfBoards;
+    }
 }

@@ -5,8 +5,19 @@ import game.Position;
 
 import java.util.ArrayList;
 
-public interface SpecialRule {
+public abstract class SpecialRule {
 
-    // If the conditions are still valid. Like, the pawn hassnt moved yet on the on passant...
-    public void specialRuleIsActive(Position currentPosition, Position newPosition, ArrayList<Board> historyOfBoards);
+    private MovementRule[] movementRules;
+    private RestrictionRule[] restrictionRules;
+
+    // If the conditions are still valid. Like, the pawn hasn't moved yet on the on passant...
+    public abstract boolean specialRuleIsActive(Position currentPosition, ArrayList<Board> historyOfBoards);
+
+    public MovementRule[] getMovementRules() {
+        return movementRules;
+    }
+
+    public RestrictionRule[] getRestrictionRules() {
+        return restrictionRules;
+    }
 }

@@ -14,8 +14,9 @@ public class BoardTypeCreator {
         PawnFactory pawnFactory = new PawnFactory();
         Board whitePawnsRow = fillEntireLineWithOnePiece(board, pawnFactory, 1, 0, 0, Color.WHITE);
         Board blackPawnsRow = fillEntireLineWithOnePiece(whitePawnsRow, pawnFactory, 6, 0, 8, Color.BLACK);
+        Board blackPawnIn31 = putPieceAtPos(blackPawnsRow, pawnFactory, 2, 1, 16, Color.BLACK);
         //todo: put remaining pieces.
-        return blackPawnsRow;
+        return blackPawnIn31;
     }
 
     private Board fillEntireLineWithOnePiece(Board board, PieceFactory pieceFactory, int row, int currentCol, int id, Color color){
@@ -24,9 +25,15 @@ public class BoardTypeCreator {
             return board;
         }
         Map<Position, Piece> newMap = board.getPositions();
-        newMap.put(board.getPositionByRowCol(row, currentCol), pieceFactory.createPiece(id, color));
+        newMap.put(board.getPositionByRowCol(row, currentCol), pieceFactory.createPieceWithSpecialRules(id, color));
         Board newBoard = new Board(newMap, 8, 8);
         return fillEntireLineWithOnePiece(newBoard, pieceFactory, row, ++currentCol, ++id, color);
+    }
+
+    private Board putPieceAtPos(Board board, PieceFactory pieceFactory, int row, int col, int id, Color color){
+        Map<Position, Piece> newMap = board.getPositions();
+        newMap.put(board.getPositionByRowCol(row, col), pieceFactory.createPieceWithSpecialRules(id, color));
+        return new Board(newMap, 8, 8);
     }
 
 

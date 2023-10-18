@@ -21,6 +21,7 @@ public class Piece {
         this.name = name;
         this.movementRules = movementRules;
         this.restrictionRules = restrictionRules;
+        this.specialRules = new SpecialRule[]{};
     }
 
     public Piece(int id, PieceName name, String nameAbbreviation, Color color, MovementRule[] movementRules, RestrictionRule[] restrictionRules, SpecialRule[] specialRules){
@@ -46,6 +47,9 @@ public class Piece {
 
     public String getNameAbbreviation() {
         return nameAbbreviation;
+    }
+    public SpecialRule[] getSpecialRules(){
+        return specialRules;
     }
 
     /*Hago la class movement, agarro la primer movement rule y meto una iteración
