@@ -2,6 +2,7 @@ package game;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Board {
 
@@ -45,7 +46,7 @@ public class Board {
                     System.out.print("| " + pieceName + " ");
                 }
                 else
-                    System.out.print("|   ");
+                    System.out.print("|    ");
                 if(j == height-1)
                     System.out.print("|");
             }
@@ -64,18 +65,12 @@ public class Board {
     public Map<Position, Piece> getPositions() {
         return positions;
     }
-    public Position getPositionByRowCol(int row, int col){
-        Position[] pos = positions.keySet().toArray(new Position[0]);
-        for(Position p : pos){
-            if(row == p.getRow() && col == p.getCol()){
-                return p;
-            }
-        }
-        return null;
-    }
 
+    public Set<Position> getPositionsMapKeys(){
+        return positions.keySet();
+    }
     public Position getPosByPos(Position pos){
-        return getPositionByRowCol(pos.getRow(), pos.getCol());
+        return getPosByAxis(pos.getRow(), pos.getCol());
     }
 
     public Position getPosByAxis(int row, int col){
@@ -89,10 +84,13 @@ public class Board {
 
     // Put any position, it doesn't matter if it doesn't exist it will change it into an existing one.
     public Piece getPiece(Position position){
-        Position pos = getPositionByRowCol(position.getRow(), position.getCol());
+        Position pos = getPosByAxis(position.getRow(), position.getCol());
         return positions.get(pos);
     }
-
+    public Piece getPieceByVector(int row, int col){
+        Position pos = getPosByAxis(row, col);
+        return getPiece(pos);
+    }
 
 
 }

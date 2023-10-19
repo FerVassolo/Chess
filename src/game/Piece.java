@@ -52,6 +52,10 @@ public class Piece {
         return specialRules;
     }
 
+    public PieceName getName() {
+        return name;
+    }
+
     /*Hago la class movement, agarro la primer movement rule y meto una iteración
     * Agarro las restrictions y gameRules y veo si puedo seguir y si es valido ese move*/
 }
