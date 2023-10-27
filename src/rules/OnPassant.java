@@ -5,7 +5,7 @@ import game.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class OnPassant extends SpecialRule{
+public class OnPassant implements SpecialRule{
 
     private MovementRule[] movementRules;
     private RestrictionRule[] restrictionRules;

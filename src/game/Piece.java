@@ -16,7 +16,7 @@ public class Piece {
 
     public Piece(int id, PieceName name, String nameAbbreviation, Color color, MovementRule[] movementRules, RestrictionRule[] restrictionRules){
         this.id = id;
-        this.nameAbbreviation = nameAbbreviation;
+        this.nameAbbreviation = abbreviation(nameAbbreviation, color);
         this.color = color;
         this.name = name;
         this.movementRules = movementRules;
@@ -26,7 +26,7 @@ public class Piece {
 
     public Piece(int id, PieceName name, String nameAbbreviation, Color color, MovementRule[] movementRules, RestrictionRule[] restrictionRules, SpecialRule[] specialRules){
         this.id = id;
-        this.nameAbbreviation = nameAbbreviation;
+        this.nameAbbreviation = abbreviation(nameAbbreviation, color);
         this.color = color;
         this.name = name;
         this.movementRules = movementRules;
@@ -55,6 +55,13 @@ public class Piece {
     public PieceName getName() {
         return name;
     }
+    private String abbreviation(String nameAbbreviation, Color color){
+        return getColorFirstLet(color) + nameAbbreviation;
+    }
+    public char getColorFirstLet(Color color){
+        return color.toString().toLowerCase().charAt(0);
+    }
+
 
     /*Hago la class movement, agarro la primer movement rule y meto una iteración
     * Agarro las restrictions y gameRules y veo si puedo seguir y si es valido ese move*/

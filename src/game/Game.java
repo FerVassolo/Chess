@@ -1,6 +1,6 @@
 package game;
 
-import rules.Movement;
+import rules.EndGameRule;
 import rules.RestrictionRule;
 
 import java.sql.Time;
@@ -11,6 +11,7 @@ public class Game {
 
     private RestrictionRule[] gameRules;
     private Player[] players;
+    private EndGameRule[] endGameRules;
     private Board board;
     private Time gameClock;
     private int turn = 0;
@@ -19,17 +20,35 @@ public class Game {
     //It ain't actually inmutable.
     private ArrayList<Board> historyOfBoards = new ArrayList<>();
 
-    public Game(RestrictionRule[] gameRules, Player[] players, Board board, Time gameClock){
+    public Game(RestrictionRule[] gameRules, EndGameRule[] endGameRules, Player[] players, Board board, Time gameClock){
         this.gameRules = gameRules;
         this.players = players;
         this.board = board;
         this.gameClock = gameClock;
+        this.endGameRules = endGameRules;
         historyOfBoards.add(board);
     }
 
+    public Game(Game game){
+        this.gameRules = game.getGameRules();
+        this.players = game.getPlayers();
+        this.board = game.getBoard();
+        this.gameClock = getGameClock();
+        this.endGameRules = game.getEndGameRules();
+    }
+
+    public EndGameRule[] getEndGameRules() {
+        return endGameRules;
+    }
+
+    public Time getGameClock() {
+        return gameClock;
+    }
+
     public void passTurn(){
-        if(++turn >= players.length)
+        if(turn + 1>= players.length)
             turn = 0;
+        else ++turn;
     }
     public Player currentTurn(){
         return players[turn];
@@ -75,24 +94,14 @@ public class Game {
         return arrayList;
     }
 
-
-    // I should put this method inside another one that checks if the game ends
-    public void startTurnBasedGame(Board board){
-        board.display();
-        ArrayList<Position> positions = askForMovement();
-        Board newBoard = new Movement().makeMove(this, positions.get(0), positions.get(1));
-        if (board == newBoard){
-            System.out.println("Movement is not valid, try again");
-            startTurnBasedGame(board);
-        }
-        passTurn();
-        // here should check if the game ends and stuff.
-
-        // if it doesn't:
+    public void setHistoryOfBoards(Board newBoard){
         historyOfBoards.add(newBoard);
-        startTurnBasedGame(newBoard);
     }
 
+
+    public Player getCurrentPlayer(){
+        return players[turn];
+    }
     public ArrayList<Board> getHistoryOfBoards() {
         return historyOfBoards;
     }

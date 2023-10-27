@@ -16,5 +16,8 @@ public class Position {
     public int getRow() {
         return row;
     }
+    public int[] posToVector(){
+        return new int[]{col, row};
+    }
 
 }

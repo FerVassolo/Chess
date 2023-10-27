@@ -1,35 +1,35 @@
-package rules;
+package game;
 
 import game.*;
+import rules.MovementRule;
+import rules.RestrictionRule;
+import rules.SpecialRule;
 
 import javax.annotation.processing.SupportedSourceVersion;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class Movement {
     /*Returns a new board or the original board depending on weather it is a valid movement or not*/
 
-    public Board makeMove(Game game, Position oldPos, Position newPos){
-        boolean isValid = validateMovement(game, oldPos, newPos);
+    public Board makeMove(Game game, Board board, Position oldPos, Position newPos) {
+        boolean isValid = validateMovement(game, board, oldPos, newPos);
 
-        Board board = game.getBoard();
-        Map<Position, Piece> newPosDisplay = board.getPositions();
-
-        if(isValid){
-            Piece movedPiece = newPosDisplay.get(board.getPosByPos(oldPos));
-            newPosDisplay.put(board.getPosByPos(oldPos), null);
-            newPosDisplay.put(board.getPosByPos(newPos), movedPiece);
-
-            return new Board(newPosDisplay, board.getHeight(), board.getWidth());
+        if (isValid) {
+           return movePiece(board, oldPos, newPos);
         }
-        return game.getBoard();
+        return board;
     }
 
-    public boolean validateMovement(Game game, Position currentPos, Position newPos){
-        Board board = game.getBoard();
+    public Board movePiece(Board board, Position oldPos, Position newPos){
+        Map<Position, Piece> newPosDisplay = new HashMap<>(board.getPositions()); // Create a copy
+        Piece movedPiece = newPosDisplay.get(board.getPosByPos(oldPos));
+        newPosDisplay.put(board.getPosByPos(oldPos), null);
+        newPosDisplay.put(board.getPosByPos(newPos), movedPiece);
+        return new Board(newPosDisplay, board.getHeight(), board.getWidth());
+    }
+
+    public boolean validateMovement(Game game, Board board, Position currentPos, Position newPos){
         Piece piece = board.getPiece(currentPos);
         if(piece == null){
             System.out.println("There is no piece on that position");
@@ -42,12 +42,17 @@ public class Movement {
         if(!selectedPieceColorIsValid(piece, game.currentTurn()))
             return false;
 
-        if(isValid(specialRules, game.getGameRules(), currentPos, newPos, game.getHistoryOfBoards(), board))
-            return true; // else: we check if with the normal rules we still can.
+        if(specialRules.length > 0){
+            for(SpecialRule sp : specialRules){
+                if(sp.specialRuleIsActive(currentPos, game.getHistoryOfBoards())){
+                    RestrictionRule[] resRules = appendRestrictionRules(game.getGameRules(), sp.getRestrictionRules());
+                    boolean isValid = isValid(movementRules, resRules, currentPos, newPos, board);
+                    if(isValid) return true;
+                }
+            }
+        }
 
         return isValid(movementRules, restrictionRules, currentPos, newPos, board);
-
-
     }
     public boolean isValid(MovementRule[] movementRules, RestrictionRule[] restrictionRules, Position currentPos, Position newPos, Board board){
         for (RestrictionRule resRule: restrictionRules){
@@ -59,7 +64,6 @@ public class Movement {
                 continue;
             return true;
         }
-
         return false;
     }
 
@@ -88,4 +92,20 @@ public class Movement {
         }
         return true;
     }
+
+    public ArrayList<Position> getPieceAllPossibleMoves(Position piecePos, Board board, Game game){
+        ArrayList<Position> array = new ArrayList<>();
+        Game newGame = new Game(game);
+        // If we want to check the position of a piece of the color that isn't moving
+        if(game.getCurrentPlayer().getColor() != board.getPiece(piecePos).getColor())
+            newGame.passTurn();
+        for(Position pos : board.getPositionsMapKeys()){
+            if(validateMovement(newGame, board, piecePos, pos))
+                array.add(pos);
+        }
+        System.out.println(array);
+        // could happen that array is null
+        return array;
+    }
+
 }

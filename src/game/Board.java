@@ -1,8 +1,8 @@
 package game;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import rules.Check;
+
+import java.util.*;
 
 public class Board {
 
@@ -43,7 +43,11 @@ public class Board {
             for (int j = 0; j < height; j++){
                 if(positions.get(getPosByAxis(i, j)) != null){
                     String pieceName = positions.get(getPosByAxis(i, j)).getNameAbbreviation();
-                    System.out.print("| " + pieceName + " ");
+                    if(positions.get(getPosByAxis(i, j)).getNameAbbreviation().length() == 3){
+                        System.out.print("| " + pieceName + "");
+                    }
+                    else
+                        System.out.print("| " + pieceName + " ");
                 }
                 else
                     System.out.print("|    ");
@@ -93,4 +97,44 @@ public class Board {
     }
 
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Board board = (Board) o;
+
+        if (height != board.height) return false;
+        if (width != board.width) return false;
+        if (!positions.equals(board.getPositions())){
+            return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(positions, height, width);
+    }
+
+
+    public ArrayList<Position> getAllPositionsOfColor(Color color){
+        ArrayList<Position> array = new ArrayList<>();
+        for(Position pos : getPositionsMapKeys()){
+            if(pieceIsOfColor(getPiece(pos), color)) {
+                array.add(pos);
+            }
+        }
+        return array;
+    }
+
+
+    public boolean pieceIsOfColor(Piece piece, Color color){
+        if(piece == null) return false;
+        return piece.getColor() == color;
+    }
 }

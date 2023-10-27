@@ -18,11 +18,16 @@ public class StraightMaxQuantityRule implements RestrictionRule{
             return true;
         int verticalDistance = Math.abs(pieceNewPos.getRow() - pieceOriginalPos.getRow());
         int horizontalDistance = Math.abs(pieceNewPos.getCol() - pieceOriginalPos.getCol());
-        if(verticalDistance > maxQty || horizontalDistance > maxQty) return false;
+        if(verticalDistance > maxQty || horizontalDistance > maxQty){
+            System.out.println("The selected piece can only move " + maxQty + " squares");
+            return false;
+        }
         return true;
     }
     public boolean isStraight(Position pieceOriginalPos, Position pieceNewPos){
-        return new VerticalMovement().validateMovement(pieceOriginalPos, pieceNewPos);
+        if(new VerticalMovement().validateMovement(pieceOriginalPos, pieceNewPos) || new HorizontalMovement().validateMovement(pieceOriginalPos, pieceNewPos))
+            return true;
+        return false;
     }
 
 
